@@ -7,3 +7,10 @@ Ce projet contient 6 fonctionnalitées :
 -Évaluation & Performance  
 -Demande de Congé  
 -Recrutement & Embauche  
+
+
+***Réalisé par :**  
+-Ahmed Amine Ben Smida  
+-Molka Boujmil  
+-Mohamed Barkaoui  
+-Malek Ayari  
