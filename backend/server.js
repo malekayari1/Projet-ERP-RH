@@ -13,6 +13,7 @@ const employeeRoutes = require("./routes/employees");
 const evaluationRoutes = require("./routes/evaluations");
 const notificationRoutes = require("./routes/notifications");
 const reportRoutes = require("./routes/reports");
+const dashboardRoutes = require("./routes/dashboard");
 
 const app = express();
 app.use(cors());
@@ -25,15 +26,32 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/evaluations", evaluationRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // health
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-connectDB(process.env.MONGO_URI).then(() => {
-  app.listen(PORT, () => {
+// Utiliser un port fixe (5001) pour éviter les conflits avec un ancien serveur sur 5000
+const PORT = 5001;
+
+// Connexion à MongoDB (désormais uniquement locale pour éviter les erreurs Atlas)
+connectDB().then(() => {
+  const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+  });
+
+  // Gérer proprement l'erreur "EADDRINUSE" (port déjà utilisé)
+  server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(
+        `Le port ${PORT} est déjà utilisé. ` +
+        `Soit un autre serveur tourne déjà, soit un ancien processus n'est pas fermé.`
+      );
+      process.exit(1);
+    } else {
+      throw err;
+    }
   });
 });

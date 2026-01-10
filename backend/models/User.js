@@ -5,8 +5,23 @@ const UserSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ["employee","manager","rh"], default: "employee" },
+  role: { 
+    type: String, 
+    enum: ["employee", "chef_equipe", "manager", "rh"], 
+    default: "employee" 
+  },
   department: { type: String },
+  // Chef d'équipe ou Manager qui supervise cet employé
+  supervisorId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User" 
+  },
+  // Pour les chefs d'équipe: leur manager
+  managerId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User" 
+  },
+  isActive: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now }
 });
 
