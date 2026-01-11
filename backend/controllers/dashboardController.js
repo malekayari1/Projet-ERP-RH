@@ -146,17 +146,39 @@ async function getEmployeeStats(userId) {
     status: { $ne: "pending" }
   });
 
-  // Dernière évaluation
+  // Actions en attente
+  const pendingSelfEvaluations = await Evaluation.countDocuments({
+    employeeId: userId,
+    status: { $in: ["pending", "self_evaluating"] }
+  });
+
+  const pendingSignatures = await Evaluation.countDocuments({
+    employeeId: userId,
+    status: "notified"
+  });
+
+  // Historique des scores (pour le graphique)
+  const scoreHistory = await Evaluation.find({
+    employeeId: userId,
+    status: { $in: ["notified", "acknowledged"] },
+    score: { $ne: null }
+  })
+    .sort({ notifiedAt: -1 })
+    .limit(5)
+    .select("score notifiedAt campaignId")
+    .populate("campaignId", "title");
+
+  // Dernière évaluation complète
   const lastEvaluation = await Evaluation.findOne({
     employeeId: userId,
-    status: { $ne: "pending" }
+    status: { $in: ["notified", "acknowledged"] }
   })
-    .sort({ evaluatedAt: -1, notifiedAt: -1 })
+    .sort({ notifiedAt: -1 })
     .populate("campaignId", "title");
 
   // Score moyen
   const avgScoreResult = await Evaluation.aggregate([
-    { $match: { employeeId: userId, score: { $ne: null }, status: "notified" } },
+    { $match: { employeeId: userId, score: { $ne: null }, status: { $in: ["notified", "acknowledged"] } } },
     { $group: { _id: null, avgScore: { $avg: "$score" } } }
   ]);
   const averageScore = avgScoreResult[0]?.avgScore || 0;
@@ -169,11 +191,20 @@ async function getEmployeeStats(userId) {
 
   return {
     totalEvaluations: myEvaluations,
+    pendingSelfEvaluations,
+    pendingSignatures,
+    scoreHistory: scoreHistory.map(h => ({
+      score: h.score,
+      date: h.notifiedAt,
+      campaign: h.campaignId?.title
+    })),
     lastEvaluation: lastEvaluation ? {
+      id: lastEvaluation._id,
       score: lastEvaluation.score,
       result: lastEvaluation.finalResult,
       campaign: lastEvaluation.campaignId?.title,
-      date: lastEvaluation.notifiedAt
+      date: lastEvaluation.notifiedAt,
+      objectives: lastEvaluation.objectives || []
     } : null,
     averageScore: Math.round(averageScore),
     unreadNotifications
