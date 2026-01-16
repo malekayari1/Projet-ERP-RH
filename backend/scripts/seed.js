@@ -12,9 +12,8 @@ const Campaign = require('../models/Campaign');
 const Evaluation = require('../models/Evaluation');
 const Notification = require('../models/Notification');
 
-// Pour éviter les problèmes de connexion à Atlas pendant le développement,
-// on pointe directement sur une base locale.
-const MONGO_URI = 'mongodb://127.0.0.1:27017/erp-evaluation';
+// On utilise l'URI définie dans le .env (Atlas) ou locale par défaut
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/erp-evaluation';
 
 const seedData = async () => {
   try {

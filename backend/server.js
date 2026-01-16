@@ -33,8 +33,8 @@ app.get("/api/health", (req, res) => res.json({ ok: true }));
 
 app.use(errorHandler);
 
-// Utiliser un port fixe (5001) pour éviter les conflits avec un ancien serveur sur 5000
-const PORT = 5001;
+// Utiliser le port du .env ou 5001 par défaut
+const PORT = process.env.PORT || 5001;
 
 // Connexion à MongoDB (désormais uniquement locale pour éviter les erreurs Atlas)
 connectDB().then(() => {

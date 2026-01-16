@@ -398,19 +398,19 @@ const DashboardPage = () => {
                       />
                       <Divider />
                       <CardContent sx={{ height: 250, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', pb: 4 }}>
-                        {stats.scoreHistory && stats.scoreHistory.length > 0 ? (
+                        {stats && stats.scoreHistory && stats.scoreHistory.length > 0 ? (
                           stats.scoreHistory.slice().reverse().map((item, idx) => (
                             <Box key={idx} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '15%' }}>
                               <Typography variant="caption" color="textSecondary" sx={{ mb: 1 }}>{item.score}%</Typography>
                               <Box sx={{
                                 width: '100%',
-                                height: item.score * 1.5,
-                                bgcolor: item.score >= 80 ? 'success.main' : item.score >= 40 ? 'warning.main' : 'error.main',
+                                height: (item.score || 0) * 1.5,
+                                bgcolor: (item.score || 0) >= 80 ? 'success.main' : (item.score || 0) >= 40 ? 'warning.main' : 'error.main',
                                 borderRadius: '4px 4px 0 0',
                                 transition: 'height 0.5s ease',
                                 '&:hover': { opacity: 0.8 }
                               }} />
-                              <Typography variant="caption" sx={{ mt: 1, textAlign: 'center', height: 40, overflow: 'hidden' }}>{item.campaign}</Typography>
+                              <Typography variant="caption" sx={{ mt: 1, textAlign: 'center', height: 40, overflow: 'hidden' }}>{item.campaign || 'N/A'}</Typography>
                             </Box>
                           ))
                         ) : (
