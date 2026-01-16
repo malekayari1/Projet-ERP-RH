@@ -19,6 +19,8 @@ import MyEvaluationsPage from './pages/MyEvaluationsPage';
 import EvaluationsPage from './pages/EvaluationsPage';
 import ReportsPage from './pages/ReportsPage';
 import ProfilePage from './pages/ProfilePage';
+import HomePage from './pages/HomePage';
+import PlaceholderPage from './pages/PlaceholderPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Create a theme instance
@@ -88,7 +90,7 @@ const theme = createTheme({
 // Protected Route component
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -96,15 +98,15 @@ const ProtectedRoute = ({ children, roles }) => {
       </Box>
     );
   }
-  
+
   if (!user) {
     return <Navigate to="/login" />;
   }
-  
+
   if (roles && !roles.includes(user.role)) {
     return <Navigate to="/" />;
   }
-  
+
   return children;
 };
 
@@ -116,69 +118,79 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            
+
             <Route path="/" element={
               <ProtectedRoute>
                 <Layout />
               </ProtectedRoute>
             }>
-              {/* Dashboard - accessible à tous */}
-              <Route index element={<DashboardPage />} />
-              
+              {/* Accueil Hub - accessible à tous */}
+              <Route index element={<HomePage />} />
+
+              {/* Dashboard Performance (ancien dashboard) */}
+              <Route path="evaluations/performance" element={<DashboardPage />} />
+
+              {/* Nouveaux modules (Placeholders) */}
+              <Route path="emails" element={<PlaceholderPage title="Auto-E-mails & Dashboard" />} />
+              <Route path="contracts" element={<PlaceholderPage title="Gestion des Contrats" />} />
+              <Route path="payroll" element={<PlaceholderPage title="Paie & Rémunération" />} />
+              <Route path="leave" element={<PlaceholderPage title="Demandes de Congé" />} />
+              <Route path="recruitment" element={<PlaceholderPage title="Recrutement & Embauche" />} />
+
               {/* Campagnes - RH uniquement */}
               <Route path="campaigns" element={
-                <ProtectedRoute roles={['rh']}>
+                <ProtectedRoute roles={['rh', 'directeur']}>
                   <CampaignsPage />
                 </ProtectedRoute>
               } />
               <Route path="campaigns/:id" element={
-                <ProtectedRoute roles={['rh', 'manager']}>
+                <ProtectedRoute roles={['rh', 'manager', 'directeur']}>
                   <CampaignDetailPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Gestion des utilisateurs - RH uniquement */}
               <Route path="users" element={
                 <ProtectedRoute roles={['rh']}>
                   <UsersPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Évaluations Chef d'équipe */}
               <Route path="evaluations/chef-equipe" element={
                 <ProtectedRoute roles={['chef_equipe']}>
                   <ChefEquipeEvaluationsPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Validations Manager */}
               <Route path="evaluations/manager" element={
                 <ProtectedRoute roles={['manager']}>
                   <ManagerValidationPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Validations et Décisions RH */}
               <Route path="evaluations/rh" element={
                 <ProtectedRoute roles={['rh']}>
                   <RHValidationPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Mes évaluations - Employé */}
               <Route path="my-evaluations" element={
                 <ProtectedRoute roles={['employee']}>
                   <MyEvaluationsPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Vue générale des évaluations - Manager et RH */}
               <Route path="evaluations" element={
                 <ProtectedRoute roles={['manager', 'rh']}>
                   <EvaluationsPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Rapports - RH uniquement */}
               <Route path="reports" element={
                 <ProtectedRoute roles={['rh']}>
@@ -190,7 +202,7 @@ function App() {
                   <ReportsPage />
                 </ProtectedRoute>
               } />
-              
+
               {/* Profil - accessible à tous */}
               <Route path="profile" element={
                 <ProtectedRoute>
@@ -198,7 +210,7 @@ function App() {
                 </ProtectedRoute>
               } />
             </Route>
-            
+
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </AuthProvider>

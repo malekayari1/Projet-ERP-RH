@@ -52,6 +52,17 @@ const seedData = async () => {
     });
     console.log('👤 Manager créé:', manager.email);
 
+    // Créer le Directeur
+    const directeur = await User.create({
+      fullName: 'Marc Lefort',
+      email: 'directeur@company.com',
+      password: 'password123',
+      role: 'directeur',
+      department: 'Direction Générale',
+      isActive: true
+    });
+    console.log('👤 Directeur créé:', directeur.email);
+
     // Créer les Chefs d'équipe
     const chefEquipe1 = await User.create({
       fullName: 'Marie Lefebvre',
@@ -193,6 +204,7 @@ const seedData = async () => {
     console.log('Comptes de test créés:');
     console.log('───────────────────────');
     console.log('RH:           rh@company.com / password123');
+    console.log('Directeur:    directeur@company.com / password123');
     console.log('Manager:      manager@company.com / password123');
     console.log('Chef équipe:  chef1@company.com / password123');
     console.log('              chef2@company.com / password123');

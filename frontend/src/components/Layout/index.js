@@ -31,6 +31,12 @@ import {
   Logout as LogoutIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
+  Home as HomeIcon,
+  Email as EmailIcon,
+  Description as ContractIcon,
+  Payments as PayrollIcon,
+  EventBusy as LeaveIcon,
+  GroupAdd as RecruitmentIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useAuth } from '../../contexts/AuthContext';
@@ -83,17 +89,27 @@ const Layout = () => {
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    // Chef d'équipe
-    { text: 'Évaluer mon équipe', icon: <AssessmentIcon />, path: '/evaluations/chef-equipe', roles: ['chef_equipe'] },
-    // Manager
-    { text: 'Valider évaluations', icon: <AssessmentIcon />, path: '/evaluations/manager', roles: ['manager'] },
-    // RH
-    { text: 'Campagnes', icon: <AssessmentIcon />, path: '/campaigns', roles: ['rh'] },
-    { text: 'Gérer évaluations', icon: <AssessmentIcon />, path: '/evaluations/rh', roles: ['rh'] },
-    { text: 'Utilisateurs', icon: <PeopleIcon />, path: '/users', roles: ['rh'] },
-    { text: 'Rapports', icon: <ReportsIcon />, path: '/reports', roles: ['rh'] },
-    // Employé
+    { text: 'Accueil', icon: <HomeIcon />, path: '/' },
+    { text: 'Performance', icon: <DashboardIcon />, path: '/evaluations/performance' },
+
+    // Modules RH / Direction
+    { text: 'Auto-E-mails', icon: <EmailIcon />, path: '/emails', roles: ['rh', 'directeur', 'manager'] },
+    { text: 'Contrats', icon: <ContractIcon />, path: '/contracts', roles: ['rh', 'directeur'] },
+    { text: 'Recrutement', icon: <RecruitmentIcon />, path: '/recruitment', roles: ['rh', 'directeur', 'manager'] },
+
+    // Modules Communs
+    { text: 'Paie', icon: <PayrollIcon />, path: '/payroll', roles: ['rh', 'directeur', 'employee'] },
+    { text: 'Congés', icon: <LeaveIcon />, path: '/leave' },
+
+    // Sections spécifiques Campagnes (existant)
+    { text: 'Campagnes', icon: <AssessmentIcon />, path: '/campaigns', roles: ['rh', 'directeur'] },
+    { text: 'Gérer évaluations', icon: <AssessmentIcon />, path: '/evaluations/rh', roles: ['rh', 'directeur'] },
+    { text: 'Utilisateurs', icon: <PeopleIcon />, path: '/users', roles: ['rh', 'directeur'] },
+    { text: 'Rapports', icon: <ReportsIcon />, path: '/reports', roles: ['rh', 'directeur'] },
+
+    // Rôles spécifiques
+    { text: 'Évaluer équipe', icon: <AssessmentIcon />, path: '/evaluations/chef-equipe', roles: ['chef_equipe'] },
+    { text: 'Valider (Manager)', icon: <AssessmentIcon />, path: '/evaluations/manager', roles: ['manager'] },
     { text: 'Mes évaluations', icon: <AssessmentIcon />, path: '/my-evaluations', roles: ['employee'] },
   ];
 
@@ -102,8 +118,8 @@ const Layout = () => {
   );
 
   const isActive = (path) => {
-    return location.pathname === path || 
-           (path !== '/' && location.pathname.startsWith(path));
+    return location.pathname === path ||
+      (path !== '/' && location.pathname.startsWith(path));
   };
 
   const drawer = (
@@ -120,7 +136,7 @@ const Layout = () => {
       <List>
         {filteredMenuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton 
+            <ListItemButton
               selected={isActive(item.path)}
               onClick={() => {
                 navigate(item.path);
@@ -169,9 +185,9 @@ const Layout = () => {
                 aria-haspopup="true"
                 color="inherit"
               >
-                <Avatar 
-                  alt={user?.fullName} 
-                  src={user?.avatar} 
+                <Avatar
+                  alt={user?.fullName}
+                  src={user?.avatar}
                   sx={{ width: 32, height: 32 }}
                 >
                   {user?.fullName?.charAt(0) || 'U'}
@@ -181,7 +197,7 @@ const Layout = () => {
           </Box>
         </Toolbar>
       </AppBarStyled>
-      
+
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -202,14 +218,14 @@ const Layout = () => {
           {drawer}
         </Drawer>
       </Box>
-      
+
       <Main>
         <DrawerHeader />
         <Box sx={{ p: 3 }}>
           <Outlet />
         </Box>
       </Main>
-      
+
       <Menu
         anchorEl={anchorEl}
         anchorOrigin={{
