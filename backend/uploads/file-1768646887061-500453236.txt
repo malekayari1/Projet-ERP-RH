@@ -1,0 +1,10 @@
+CNI - Carte Nationale d'Identité
+--------------------------------
+Nom            : Ben Smida
+Prénom         : Ahmed Amine
+Date de naissance : 12/06/1995
+Lieu de naissance : Tunis
+Numéro CNI     : 01234567
+Nationalité    : Tunisienne
+Date de délivrance : 03/05/2021
+Date d'expiration : 02/05/2031
